@@ -1,0 +1,21 @@
+# Build artifacts
+bin/
+obj/
+
+# VS/IDE
+.vs/
+.idea/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Local tooling
+.cache/
+.DS_Store
+
+
+
+
+

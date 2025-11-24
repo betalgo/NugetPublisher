@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Docs/">
+    <File Path="action.yml" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="NugetPublisher.Tests/NugetPublisher.Tests.csproj" Id="b75bec79-5d06-4036-969e-85ed4e85324a" />
+  <Project Path="NugetPublisher/NugetPublisher.csproj" />
+</Solution>

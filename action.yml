@@ -1,0 +1,166 @@
+name: Betalgo-Nuget-Publisher
+description: Publish .NET projects to NuGet and GitHub Packages with a dedicated .NET runner.
+author: Betalgo
+branding:
+  icon: package
+  color: purple
+inputs:
+  project-file:
+    description: Relative path to the .csproj file that should be packed.
+    required: true
+  package-name:
+    description: Optional override for the NuGet package ID.
+    required: false
+  version-file:
+    description: Optional path to the file that contains the version (defaults to the project file).
+    required: false
+  version-regex:
+    description: Optional regex with a capture group for extracting the version when XML parsing is not applicable.
+    required: false
+  version-regex-options:
+    description: RegexOptions flags separated by '|' (e.g. IgnoreCase|Multiline).
+    required: false
+  version-static:
+    description: Explicit version value. When provided no file parsing is performed.
+    required: false
+  tag-commit:
+    description: Create and push a git tag that uses tag-format.
+    required: false
+    default: "true"
+  tag-format:
+    description: Template for the git tag. The '*' placeholder is replaced with the calculated version.
+    required: false
+    default: v*
+  nuget-source:
+    description: Base NuGet service URL used for version discovery.
+    required: false
+    default: https://api.nuget.org
+  nuget-push-source:
+    description: Full NuGet server index used for dotnet nuget push.
+    required: false
+    default: https://api.nuget.org/v3/index.json
+  nuget-api-key:
+    description: API key/token for the primary NuGet source. Required to publish.
+    required: false
+  include-symbols:
+    description: Include symbol packages when packing.
+    required: false
+    default: "false"
+  configuration:
+    description: Build configuration passed to dotnet (e.g. Release or Debug).
+    required: false
+    default: Release
+  output-directory:
+    description: Directory for generated nupkg/snupkg files (defaults to a 'nupkg' folder next to the project file).
+    required: false
+  clean:
+    description: Run 'dotnet clean' before packing.
+    required: false
+    default: "true"
+  publish-to-github-packages:
+    description: Also push the artifact to GitHub Packages.
+    required: false
+    default: "false"
+  github-packages-owner:
+    description: Owner/organization for GitHub Packages (defaults to GITHUB_REPOSITORY_OWNER when empty).
+    required: false
+  github-packages-source:
+    description: Fully qualified GitHub Packages feed URL. When empty a URL is derived from the owner.
+    required: false
+  github-packages-api-key:
+    description: GitHub Packages token (often GITHUB_TOKEN with packages:write scope).
+    required: false
+  github-packages-include-symbols:
+    description: Push symbol packages to GitHub Packages too.
+    required: false
+    default: "false"
+  dotnet-version:
+    description: .NET SDK version used to run the single-file publisher.
+    required: false
+    default: 8.0.x
+  git-user-name:
+    description: Git user.name configured before tagging.
+    required: false
+    default: github-actions
+  git-user-email:
+    description: Git user.email configured before tagging.
+    required: false
+    default: actions@github.com
+  dry-run:
+    description: Execute all checks but skip packing and pushing.
+    required: false
+    default: "false"
+  skip-when-version-exists:
+    description: Stop early when the target version already exists on the NuGet source.
+    required: false
+    default: "true"
+  extra-pack-arguments:
+    description: Additional arguments appended to 'dotnet pack'.
+    required: false
+outputs:
+  package-name:
+    description: Final package ID that was evaluated.
+    value: ${{ steps.publish.outputs.package_name }}
+  version:
+    description: Version that was used for packing/publishing.
+    value: ${{ steps.publish.outputs.version }}
+  should-publish:
+    description: Indicates whether the version was missing from the NuGet feed.
+    value: ${{ steps.publish.outputs.should_publish }}
+  published:
+    description: True when the action pushed to at least one feed.
+    value: ${{ steps.publish.outputs.published }}
+  package-path:
+    description: Full path to the generated .nupkg file.
+    value: ${{ steps.publish.outputs.package_path }}
+  symbols-package-path:
+    description: Full path to the generated .snupkg file when available.
+    value: ${{ steps.publish.outputs.symbols_package_path }}
+  tag:
+    description: Git tag that was created/pushed (when enabled).
+    value: ${{ steps.publish.outputs.tag }}
+  github-packages-source:
+    description: GitHub Packages feed URL that received the push.
+    value: ${{ steps.publish.outputs.github_packages_source }}
+runs:
+  using: composite
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+        cache: true
+    - id: publish
+      name: Execute Betalgo NuGet Publisher
+      shell: bash
+      env:
+        PROJECT_FILE: ${{ inputs.project-file }}
+        PACKAGE_NAME: ${{ inputs.package-name }}
+        VERSION_FILE: ${{ inputs.version-file }}
+        VERSION_REGEX: ${{ inputs.version-regex }}
+        VERSION_REGEX_OPTIONS: ${{ inputs.version-regex-options }}
+        VERSION_STATIC: ${{ inputs.version-static }}
+        TAG_COMMIT: ${{ inputs.tag-commit }}
+        TAG_FORMAT: ${{ inputs.tag-format }}
+        NUGET_SOURCE: ${{ inputs.nuget-source }}
+        NUGET_PUSH_SOURCE: ${{ inputs.nuget-push-source }}
+        NUGET_API_KEY: ${{ inputs.nuget-api-key }}
+        INCLUDE_SYMBOLS: ${{ inputs.include-symbols }}
+        DOTNET_CONFIGURATION: ${{ inputs.configuration }}
+        OUTPUT_DIRECTORY: ${{ inputs.output-directory }}
+        CLEAN_BEFORE_BUILD: ${{ inputs.clean }}
+        PUBLISH_TO_GITHUB_PACKAGES: ${{ inputs.publish-to-github-packages }}
+        GITHUB_PACKAGES_OWNER: ${{ inputs.github-packages-owner }}
+        GITHUB_PACKAGES_SOURCE: ${{ inputs.github-packages-source }}
+        GITHUB_PACKAGES_API_KEY: ${{ inputs.github-packages-api-key }}
+        GITHUB_PACKAGES_INCLUDE_SYMBOLS: ${{ inputs.github-packages-include-symbols }}
+        GIT_USER_NAME: ${{ inputs.git-user-name }}
+        GIT_USER_EMAIL: ${{ inputs.git-user-email }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        SKIP_WHEN_VERSION_EXISTS: ${{ inputs.skip-when-version-exists }}
+        EXTRA_PACK_ARGUMENTS: ${{ inputs.extra-pack-arguments }}
+      run: |
+        set -euo pipefail
+        dotnet --info
+        dotnet run --project "${{ github.action_path }}/NugetPublisher/NugetPublisher.csproj"
+
