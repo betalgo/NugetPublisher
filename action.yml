@@ -97,6 +97,14 @@ inputs:
   extra-pack-arguments:
     description: Additional arguments appended to 'dotnet pack'.
     required: false
+  no-restore:
+    description: Skip the 'dotnet restore' step (pass --no-restore to pack).
+    required: false
+    default: "false"
+  continuous-integration-build:
+    description: Set the ContinuousIntegrationBuild property to true.
+    required: false
+    default: "true"
 outputs:
   package-name:
     description: Final package ID that was evaluated.
@@ -159,6 +167,8 @@ runs:
         DRY_RUN: ${{ inputs.dry-run }}
         SKIP_WHEN_VERSION_EXISTS: ${{ inputs.skip-when-version-exists }}
         EXTRA_PACK_ARGUMENTS: ${{ inputs.extra-pack-arguments }}
+        NO_RESTORE: ${{ inputs.no-restore }}
+        CONTINUOUS_INTEGRATION_BUILD: ${{ inputs.continuous-integration-build }}
       run: |
         set -euo pipefail
         dotnet --info

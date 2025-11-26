@@ -77,6 +77,8 @@ jobs:
 | `dry-run` | | `false` | Perform checks only (no pack/push). |
 | `skip-when-version-exists` | | `true` | Stop early when the version already exists on the feed. |
 | `extra-pack-arguments` | | — | Additional arguments appended to `dotnet pack`. |
+| `no-restore` | | `false` | Skip the `dotnet restore` step (pass `--no-restore` to pack). |
+| `continuous-integration-build` | | `true` | Set the `ContinuousIntegrationBuild` property to true. |
 
 ## Outputs
 

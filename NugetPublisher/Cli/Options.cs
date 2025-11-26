@@ -31,6 +31,8 @@ internal sealed record Options
     public bool DryRun { get; init; }
     public bool SkipWhenVersionExists { get; init; }
     public string? ExtraPackArguments { get; init; }
+    public bool NoRestore { get; init; }
+    public bool ContinuousIntegrationBuild { get; init; }
 
     public static Options FromEnvironment()
     {
@@ -76,6 +78,8 @@ internal sealed record Options
             DryRun = GetBool("DRY_RUN"),
             SkipWhenVersionExists = GetBool("SKIP_WHEN_VERSION_EXISTS", true),
             ExtraPackArguments = GetEnv("EXTRA_PACK_ARGUMENTS"),
+            NoRestore = GetBool("NO_RESTORE"),
+            ContinuousIntegrationBuild = GetBool("CONTINUOUS_INTEGRATION_BUILD", true),
             WorkingDirectory = workingDirectory
         };
     }

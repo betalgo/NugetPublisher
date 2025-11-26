@@ -255,9 +255,22 @@ internal sealed class Publisher(Options options) : IDisposable
             options.ProjectFilePath,
             "-c", options.Configuration,
             "-o", options.EffectiveOutputDirectory,
-            $"-p:PackageVersion={version}",
-            "-p:ContinuousIntegrationBuild=true"
+            $"-p:PackageVersion={version}"
         };
+
+        if (options.ContinuousIntegrationBuild)
+        {
+            args.Add("-p:ContinuousIntegrationBuild=true");
+        }
+
+        if (options.NoRestore)
+        {
+            args.Add("--no-restore");
+        }
+        else
+        {
+            args.Add("-p:RestoreLockedMode=false");
+        }
 
         if (!string.Equals(packageName, Path.GetFileNameWithoutExtension(options.ProjectFilePath), StringComparison.Ordinal))
         {

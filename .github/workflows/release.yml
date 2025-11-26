@@ -15,8 +15,3 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Build
         run: dotnet build NugetPublisher/NugetPublisher.csproj -c Release
-
-
-
-
-
