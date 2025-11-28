@@ -44,7 +44,6 @@ jobs:
           project-file: src/MyProject/MyProject.csproj
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
           publish-to-github-packages: true
-          github-packages-api-key: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Inputs
@@ -69,7 +68,7 @@ jobs:
 | `publish-to-github-packages` | | `false` | Also push to GitHub Packages. |
 | `github-packages-owner` | | `GITHUB_REPOSITORY_OWNER` | Owner used to build the GitHub feed URL. |
 | `github-packages-source` | | derived | Fully qualified GitHub Packages feed URL. |
-| `github-packages-api-key` | | — | Token with `packages:write` scope. |
+| `github-packages-api-key` | | `github.token` | Token with `packages:write` scope. |
 | `github-packages-include-symbols` | | `false` | Include symbols when pushing to GitHub Packages. |
 | `dotnet-version` | | `8.0.x` | SDK used by `actions/setup-dotnet`. |
 | `git-user-name` | | `github-actions` | Git identity used for tagging. |

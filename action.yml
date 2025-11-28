@@ -159,7 +159,7 @@ runs:
         PUBLISH_TO_GITHUB_PACKAGES: ${{ inputs.publish-to-github-packages }}
         GITHUB_PACKAGES_OWNER: ${{ inputs.github-packages-owner }}
         GITHUB_PACKAGES_SOURCE: ${{ inputs.github-packages-source }}
-        GITHUB_PACKAGES_API_KEY: ${{ inputs.github-packages-api-key }}
+        GITHUB_PACKAGES_API_KEY: ${{ inputs.github-packages-api-key || github.token }}
         GITHUB_PACKAGES_INCLUDE_SYMBOLS: ${{ inputs.github-packages-include-symbols }}
         GIT_USER_NAME: ${{ inputs.git-user-name }}
         GIT_USER_EMAIL: ${{ inputs.git-user-email }}
